@@ -67,7 +67,7 @@ void selectMode() {
 void setup() {
     Serial.begin(115200);
     delay(1000); // Give serial time to attach
-    Serial.println("\n\n--- M5 ADV - KB-Mouse v2.11.1 Booting ---");
+    Serial.println("\n\n--- M5 ADV - KB-Mouse v2.11.2 Booting ---");
 
     auto cfg = M5.config();
     M5Cardputer.begin(cfg, true);
@@ -204,12 +204,10 @@ void loop() {
     // --- Centralized Keyboard Event Handler ---
     bool changed = M5Cardputer.Keyboard.isChange();
     if (changed && M5Cardputer.Keyboard.isPressed()) {
-        Keyboard_Class::KeysState status = M5Cardputer.Keyboard.keysState();
-        
-        // Handle Fn hotkeys ONLY in mouse mode to avoid typing conflicts
-        if (status.fn && mouseMode) {
-            // Configuration Toggles via Ctrl
-            if (M5Cardputer.Keyboard.isKeyPressed(KEY_LEFT_CTRL) || M5Cardputer.Keyboard.isKeyPressed(KEY_RIGHT_CTRL)) {
+        // Configuration Toggles via Ctrl
+        if (mouseMode) {
+            bool ctrlPressed = M5Cardputer.Keyboard.isKeyPressed(KEY_LEFT_CTRL) || M5Cardputer.Keyboard.isKeyPressed(KEY_RIGHT_CTRL);
+            if (ctrlPressed) {
                 if (M5Cardputer.Keyboard.isKeyPressed('p')) {
                     portraitMode = !portraitMode;
                     displayMainScreen(usbMode, mouseMode, lastBluetoothStatus, gyroMode, portraitMode);
@@ -221,9 +219,6 @@ void loop() {
                     delay(200);
                 }
             }
-            // Original Fn hotkeys (m for mode swap, g for gyro, p for portrait) are removed as per the new logic.
-            // The new logic moves mode swap to G0 long press, and gyro/portrait to Ctrl+Fn+key.
-            // The provided snippet only shows the Ctrl+Fn part, implying the old Fn+m/g/p are removed.
         }
     }
 
@@ -233,5 +228,5 @@ void loop() {
         handleBluetoothMode(mouseMode, gyroMode, portraitMode, changed);
     }
 
-    M5Cardputer.update();
+    // REMOVED redundant M5Cardputer.update() to fix button event clearing
 }

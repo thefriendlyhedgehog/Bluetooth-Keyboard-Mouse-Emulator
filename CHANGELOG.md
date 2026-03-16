@@ -4,6 +4,19 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2.11.2] – 2026-03-16 – ADV Edition
+
+### Fixed
+- **G0 Consistency**: Fixed an issue where G0 short-press (KB/Mouse toggle) would sometimes fail.
+- **Ctrl Hotkeys**: Fixed `Ctrl+P` and `Ctrl+G` modifiers to work correctly without needing the Fn key.
+
+### Changed
+- **Landscape UI Parity**: Removed the "G0 switch" text box from Landscape mode.
+- **Dual Landscape Indicators**: Added a dual USB/BT status sidebar to the right side of the screen in Landscape mode (matching Portrait behavior).
+- **Layout Adjustments**: Realigned panels and icons in Landscape mode to accommodate the new sidebar.
+
+---
+
 ## [2.11.1] – 2026-03-16 – ADV Edition
 
 ### Changed

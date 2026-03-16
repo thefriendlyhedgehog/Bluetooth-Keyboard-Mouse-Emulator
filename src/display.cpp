@@ -24,14 +24,14 @@ void drawDeviceRect(bool mouseMode, bool gyroMode, bool portraitMode) {
             M5Cardputer.Display.print("GYRO");
         }
     } else {
-        // Landscape: Side-by-side layout (Standard)
-        M5Cardputer.Display.drawRoundRect(10, 70, w / 2 - 15, h - 80, 3, mouseMode ? TFT_WHITE : TFT_GREEN);
-        M5Cardputer.Display.drawRoundRect(w / 2 + 5, 70, w / 2 - 15, h - 80, 3, mouseMode ? TFT_GREEN : TFT_WHITE);
+        // Landscape: Side-by-side layout (Standard) - Moved left to make room for sidebar
+        M5Cardputer.Display.drawRoundRect(5, 70, 105, h - 80, 3, mouseMode ? TFT_WHITE : TFT_GREEN);
+        M5Cardputer.Display.drawRoundRect(115, 70, 105, h - 80, 3, mouseMode ? TFT_GREEN : TFT_WHITE);
         
         if (mouseMode && gyroMode) {
             M5Cardputer.Display.setTextColor(TFT_CYAN);
             M5Cardputer.Display.setTextSize(1);
-            M5Cardputer.Display.setCursor(w / 2 + 12, h - 20);
+            M5Cardputer.Display.setCursor(120, h - 20);
             M5Cardputer.Display.print("GYRO");
         }
     }
@@ -87,20 +87,33 @@ void modeIndicator(bool usbMode, bool bluetoothStatus, bool portraitMode) {
             M5Cardputer.Display.print(bTxt[i]);
         }
     } else {
-        uint16_t color = (bluetoothStatus || usbMode) ? TFT_GREEN : TFT_RED;
-        int rectW = 104;
-        int rectH = 20;
-        int x = 10, y = 39;
-        M5Cardputer.Display.drawRoundRect(x, y, rectW, rectH, 5, color);
-        M5Cardputer.Display.setTextColor(color);
-        M5Cardputer.Display.setTextSize(1.6);
+        // Dual Vertical indicator on the right side (Landscape Parity)
+        int barX = 225;
+        int barY = 39;
+        int barW = 12;
+        int barH = 90;
+        int halfH = barH / 2;
+        
+        uint16_t usbColor = usbMode ? TFT_GREEN : TFT_DARKGREY;
+        uint16_t btColor  = (!usbMode && bluetoothStatus) ? TFT_GREEN : (!usbMode ? TFT_RED : TFT_DARKGREY);
 
-        if (usbMode) {
-            M5Cardputer.Display.setCursor(x + 40, y + 4);
-            M5Cardputer.Display.print("USB");
-        } else {
-            M5Cardputer.Display.setCursor(x + 13, y + 4);
-            M5Cardputer.Display.print("Bluetooth");
+        // USB Zone
+        M5Cardputer.Display.drawRoundRect(barX, barY, barW, halfH - 2, 3, usbColor);
+        M5Cardputer.Display.setTextColor(usbColor);
+        M5Cardputer.Display.setTextSize(1);
+        const char* uTxt = "USB";
+        for(int i=0; i<3; i++) {
+            M5Cardputer.Display.setCursor(barX + 3, barY + 5 + i*13);
+            M5Cardputer.Display.print(uTxt[i]);
+        }
+
+        // BT Zone
+        M5Cardputer.Display.drawRoundRect(barX, barY + halfH + 2, barW, halfH - 2, 3, btColor);
+        M5Cardputer.Display.setTextColor(btColor);
+        const char* bTxt = "BT";
+        for(int i=0; i<2; i++) {
+            M5Cardputer.Display.setCursor(barX + 3, barY + halfH + 12 + i*13);
+            M5Cardputer.Display.print(bTxt[i]);
         }
     }
 }
@@ -140,15 +153,7 @@ void displayMainScreen(bool usbMode, bool mouseMode, bool bluetoothStatus, bool 
  
     // Indicators
     modeIndicator(usbMode, bluetoothStatus, portraitMode);
-    
-    if (!portraitMode) {
-        M5Cardputer.Display.setTextColor(TFT_LIGHTGREY);
-        M5Cardputer.Display.drawRoundRect(123, 39, 106, 20, 5, TFT_LIGHTGREY);
-        M5Cardputer.Display.setCursor(136, 43);
-        M5Cardputer.Display.setTextSize(1.6);
-        M5Cardputer.Display.print("GO switch");
-    }
-
+ 
     drawDeviceRect(mouseMode, gyroMode, portraitMode);
     
     if (portraitMode) {
@@ -161,8 +166,8 @@ void displayMainScreen(bool usbMode, bool mouseMode, bool bluetoothStatus, bool 
         drawKeyboardIcon(panelCenterX - 20, topPanelMidY - 10);
         drawMouseIcon(panelCenterX - 12, botPanelMidY - 17);
     } else {
-        drawKeyboardIcon(42, 87);
-        drawMouseIcon(165, 80);
+        drawKeyboardIcon(37, 87);
+        drawMouseIcon(155, 80);
     }
 }
 
