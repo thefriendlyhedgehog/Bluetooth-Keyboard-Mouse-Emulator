@@ -4,6 +4,18 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2.9.3] – 2026-03-16 – ADV Edition
+
+### Added
+- **Fn Layer Hotkeys (Case Layout)**: Added `Fn` combinations matching the physical labels on the Cardputer case:
+  - `Fn + ` ` -> **Escape**
+  - `Fn + ;` -> **Up Arrow**
+  - `Fn + .` -> **Down Arrow**
+  - `Fn + ,` -> **Left Arrow**
+  - `Fn + /` -> **Right Arrow**
+
+---
+
 ## [2.9.2] – 2026-03-16 – ADV Edition
 
 ### Fixed

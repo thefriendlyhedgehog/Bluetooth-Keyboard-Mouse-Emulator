@@ -28,12 +28,22 @@ static float gyroOffsetX = 0, gyroOffsetY = 0;
 // codes to F1–F12 (0x3A–0x45).
 // -------------------------------------------------------
 static uint8_t fnKeySubstitute(uint8_t hidCode) {
+    // F-Keys mapping
     static const uint8_t numberHID[] = {0x1E,0x1F,0x20,0x21,0x22,0x23,0x24,0x25,0x26,0x27,0x2D,0x2E};
     static const uint8_t fKeys[]     = {0x3A,0x3B,0x3C,0x3D,0x3E,0x3F,0x40,0x41,0x42,0x43,0x44,0x45};
     for (uint8_t i = 0; i < 12; i++) {
         if (hidCode == numberHID[i]) return fKeys[i];
     }
-    return hidCode;
+    
+    // Physical Case Indicators mapping
+    switch (hidCode) {
+        case 0x35: return 0x29; // Fn + ` -> Escape
+        case 0x33: return 0x52; // Fn + ; -> Up Arrow
+        case 0x37: return 0x51; // Fn + . -> Down Arrow
+        case 0x36: return 0x50; // Fn + , -> Left Arrow
+        case 0x38: return 0x4F; // Fn + / -> Right Arrow
+        default:   return hidCode;
+    }
 }
 
 // -------------------------------------------------------
