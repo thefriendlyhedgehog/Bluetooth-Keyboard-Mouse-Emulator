@@ -1,0 +1,18 @@
+# PlatformIO
+.pio/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Old binary releases (keep only latest)
+M5-Keyboard-Mouse-v2-OTA.bin
+M5-Keyboard-Mouse-v2.5-OTA.bin
+M5-Keyboard-Mouse-v2.6-OTA.bin
+M5-Keyboard-Mouse-v2.7-OTA.bin
+M5-Keyboard-Mouse-v2.7.1-OTA.bin
+M5-Keyboard-Mouse-v2.8-OTA.bin
+M5-Keyboard-Mouse-v2.9-OTA.bin

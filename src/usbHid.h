@@ -5,8 +5,19 @@
 #include "USBHIDKeyboard.h"
 #include <M5Cardputer.h>
 
-void usbMouse();
+// Mouse movement speed in arrow-key mode (pixels per tick)
+#define MOUSE_SPEED 5
+// Scroll wheel speed for Fn+arrow mode
+#define SCROLL_SPEED 1
+// Gyro sensitivity scale
+#define GYRO_SCALE 30.0f
+// Gyro deadzone to prevent jitter
+#define GYRO_DEADZONE 0.05f
+
+void usbMouseInit();
+void usbMouse(bool gyroMode);
+void usbKeyboardInit();
 void usbKeyboard();
-void handleUsbMode(bool mouseMode);
+void handleUsbMode(bool mouseMode, bool gyroMode, bool portraitMode);
 
 #endif

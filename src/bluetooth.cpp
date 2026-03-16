@@ -1,5 +1,4 @@
 
-
 #include "bluetooth.h"
 
 BLEHIDDevice* hid;
@@ -13,107 +12,158 @@ void MyBLEServerCallbacks::onConnect(BLEServer* pServer) {
 
 void MyBLEServerCallbacks::onDisconnect(BLEServer* pServer, esp_ble_gatts_cb_param_t *param) {
     bluetoothIsConnected = false;
-    
-    pServer->disconnect(param->disconnect.conn_id); // Properly disconnect the client
-    pServer->startAdvertising();  // Start advertising making device discoverable
+    pServer->disconnect(param->disconnect.conn_id);
+    pServer->startAdvertising();
 }
 
 bool getBluetoothStatus() {
-    return  bluetoothIsConnected;
+    return bluetoothIsConnected;
 }
 
-void bluetoothMouse() {
-    int16_t x = 0;         // Déplacement en X
-    int16_t y = 0;         // Déplacement en Y
-    uint8_t buttons = 0;   // Boutons de la souris
+// -------------------------------------------------------
+static float gyroOffsetX = 0, gyroOffsetY = 0;
+
+// -------------------------------------------------------
+// F-key substitution: when Fn held, remap number row HID
+// codes to F1–F12 (0x3A–0x45).
+// -------------------------------------------------------
+static uint8_t fnKeySubstitute(uint8_t hidCode) {
+    static const uint8_t numberHID[] = {0x1E,0x1F,0x20,0x21,0x22,0x23,0x24,0x25,0x26,0x27,0x2D,0x2E};
+    static const uint8_t fKeys[]     = {0x3A,0x3B,0x3C,0x3D,0x3E,0x3F,0x40,0x41,0x42,0x43,0x44,0x45};
+    for (uint8_t i = 0; i < 12; i++) {
+        if (hidCode == numberHID[i]) return fKeys[i];
+    }
+    return hidCode;
+}
+
+// -------------------------------------------------------
+// BLE Mouse tick
+// -------------------------------------------------------
+void bluetoothMouse(bool gyroMode, bool portraitMode) {
+    if (!bluetoothIsConnected) return;
+
+    int8_t moveX = 0, moveY = 0, wheel = 0, pan = 0;
+    uint8_t buttons = 0;
 
     Keyboard_Class::KeysState status = M5Cardputer.Keyboard.keysState();
 
-    // Bouton gauche
-    if (status.enter) {
-        buttons |= 0x01;
-    }
-    // Bouton droit
-    if (M5Cardputer.Keyboard.isKeyPressed('\\')) {
-        buttons |= 0x02;
+    if (gyroMode) {
+        float ax, ay, az;
+        M5.Imu.getAccel(&ax, &ay, &az);
+
+        float dx = ax - gyroOffsetX;
+        float dy = ay - gyroOffsetY;
+
+        if (abs(dx) < GYRO_DEADZONE) dx = 0;
+        if (abs(dy) < GYRO_DEADZONE) dy = 0;
+
+        if (portraitMode) {
+            // Portrait: X controlled by -dy, Y controlled by dx
+            moveX = (int8_t)(-dy * GYRO_SCALE);
+            moveY = (int8_t)(dx * GYRO_SCALE);
+        } else {
+            // Landscape: X controlled by -dx, Y controlled by -dy
+            moveX = (int8_t)(-dx * GYRO_SCALE);
+            moveY = (int8_t)(-dy * GYRO_SCALE);
+        }
+    } else if (status.fn) {
+        // --- Fn held: arrow-related keys = scroll / pan (Bluetooth HID style) ---
+        if (M5Cardputer.Keyboard.isKeyPressed(';')) wheel =  1;  // scroll up
+        if (M5Cardputer.Keyboard.isKeyPressed('.')) wheel = -1;  // scroll down
+        if (M5Cardputer.Keyboard.isKeyPressed('/'))  pan   =  SCROLL_SPEED;  // pan right
+        if (M5Cardputer.Keyboard.isKeyPressed(','))  pan   = -SCROLL_SPEED;  // pan left
+    } else {
+        // --- Normal arrow-key mouse movement ---
+        if (M5Cardputer.Keyboard.isKeyPressed('/'))  moveX =  MOUSE_SPEED;
+        if (M5Cardputer.Keyboard.isKeyPressed(','))  moveX = -MOUSE_SPEED;
+        if (M5Cardputer.Keyboard.isKeyPressed(';'))  moveY = -MOUSE_SPEED;
+        if (M5Cardputer.Keyboard.isKeyPressed('.'))  moveY =  MOUSE_SPEED;
     }
 
-    // Vertical
-    if (M5Cardputer.Keyboard.isKeyPressed(';')) {
-        y -= 1;
-    }
-    else if (M5Cardputer.Keyboard.isKeyPressed('.')) {
-        y += 1;
-    }
-
-    // Horizontal
-    if (M5Cardputer.Keyboard.isKeyPressed('/')) {
-        x += 1;
-    }
-    else if (M5Cardputer.Keyboard.isKeyPressed(',')) {
-        x -= 1;
+// Clicks: default or portrait remapping
+    bool leftClick, rightClick, recenter;
+    if (portraitMode) {
+        leftClick  = M5Cardputer.Keyboard.isKeyPressed('q');
+        rightClick = M5Cardputer.Keyboard.isKeyPressed('1');
+        recenter   = M5Cardputer.Keyboard.isKeyPressed(0x80); // KEY_LEFT_CTRL
+    } else {
+        leftClick  = M5Cardputer.Keyboard.isKeyPressed('`');
+        rightClick = status.del; // Backspace
+        recenter   = status.enter;
     }
 
-    // Send
-    uint8_t report[4] = {buttons, (uint8_t)x, (uint8_t)y, 0};
+    if (recenter && gyroMode) {
+        float ax, ay, az;
+        M5.Imu.getAccel(&ax, &ay, &az);
+        gyroOffsetX = ax; gyroOffsetY = ay;
+    }
+
+    if (leftClick)  buttons |= 0x01;
+    if (rightClick) buttons |= 0x02;
+    
+    // Report: buttons, X, Y, Wheel, Pan  (5 bytes, report ID 1)
+    uint8_t report[5] = {buttons, (uint8_t)moveX, (uint8_t)moveY, (uint8_t)wheel, (uint8_t)pan};
     mouseInput->setValue(report, sizeof(report));
     mouseInput->notify();
 }
 
+// -------------------------------------------------------
+// BLE Keyboard tick
+// -------------------------------------------------------
 void bluetoothKeyboard() {
-    uint8_t modifier = 0;
-    uint8_t keycode[6] = {0};
-
     Keyboard_Class::KeysState status = M5Cardputer.Keyboard.keysState();
 
-    // Keys
-    int count = 0;
-    for (auto key : status.hid_keys) {
-        if (count < 6) {
-            keycode[count] = key;
-            count++;
-        }
+    uint8_t modifiers = status.modifiers;
+    // Map Opt key to GUI (Command)
+    if (status.opt) modifiers |= (1 << 3); // ESP32 HID bit 3 is GUI
+
+    uint8_t idx = 0;
+    uint8_t keys[6] = {0};
+
+    for (auto k : status.hid_keys) {
+        if (idx >= 6) break;
+        uint8_t key = status.fn ? fnKeySubstitute(k) : k;
+        keys[idx++] = key;
     }
 
-    if (M5Cardputer.Keyboard.isKeyPressed(' ') && count < 6) {
-        keycode[count++] = 0x2C;  // HID SPACE
+    // Space
+    if (M5Cardputer.Keyboard.isKeyPressed(' ') && idx < 6) {
+        uint8_t HID_SPACE = 0x2C;
+        bool present = false;
+        for (int i = 0; i < idx; i++) if (keys[i] == HID_SPACE) { present = true; break; }
+        if (!present) keys[idx++] = HID_SPACE;
     }
 
-    // Modifiers
-    if (status.ctrl)  modifier |= 0x01;
-    if (status.shift) modifier |= 0x02;
-    if (status.alt)   modifier |= 0x04;
-
-    // Send
-    uint8_t report[8] = {
-        modifier, 0,
-        keycode[0], keycode[1], keycode[2],
-        keycode[3], keycode[4], keycode[5]
-    };
+    uint8_t report[8] = {modifiers, 0, keys[0], keys[1], keys[2], keys[3], keys[4], keys[5]};
     keyboardInput->setValue(report, sizeof(report));
     keyboardInput->notify();
 
     delay(50);
 }
 
+// -------------------------------------------------------
+// Send zeroed reports (key-up / mouse-stopped)
+// -------------------------------------------------------
 void sendEmptyReports() {
-    uint8_t emptyMouseReport[4] = {0, 0, 0, 0};
-    mouseInput->setValue(emptyMouseReport, sizeof(emptyMouseReport));
+    uint8_t emptyMouse[5]    = {0, 0, 0, 0, 0};
+    uint8_t emptyKeyboard[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+    mouseInput->setValue(emptyMouse, sizeof(emptyMouse));
     mouseInput->notify();
-
-    uint8_t emptyKeyboardReport[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-    keyboardInput->setValue(emptyKeyboardReport, sizeof(emptyKeyboardReport));
+    keyboardInput->setValue(emptyKeyboard, sizeof(emptyKeyboard));
     keyboardInput->notify();
 }
 
-void handleBluetoothMode(bool mouseMode) {
+// -------------------------------------------------------
+// Mode dispatcher
+// -------------------------------------------------------
+void handleBluetoothMode(bool mouseMode, bool gyroMode, bool portraitMode) {
     if (bluetoothIsConnected) {
-        if (M5Cardputer.Keyboard.isPressed()) {
-            if (mouseMode) {
-                bluetoothMouse();
-            } else {
-                bluetoothKeyboard();
-            }
+        bool pressed = M5Cardputer.Keyboard.isPressed();
+        // In gyro mode we always need to send mouse reports (device may be tilted)
+        if (mouseMode && (gyroMode || pressed)) {
+            bluetoothMouse(gyroMode, portraitMode);
+        } else if (!mouseMode && pressed) {
+            bluetoothKeyboard();
         } else {
             sendEmptyReports();
         }
@@ -121,30 +171,29 @@ void handleBluetoothMode(bool mouseMode) {
     delay(7);
 }
 
+// -------------------------------------------------------
+// BLE init
+// -------------------------------------------------------
 void initBluetooth() {
     BLEDevice::init("M5-Keyboard-Mouse");
     BLEServer *pServer = BLEDevice::createServer();
     pServer->setCallbacks(new MyBLEServerCallbacks());
 
-    // Création du périphérique HID
     hid = new BLEHIDDevice(pServer);
-    mouseInput = hid->inputReport(1);    // Rapport pour la souris
-    keyboardInput = hid->inputReport(2);   // Rapport pour le clavier
+    mouseInput    = hid->inputReport(1);
+    keyboardInput = hid->inputReport(2);
 
-    // Configuration des informations du fabricant et HID
     hid->manufacturer()->setValue("M5Stack");
     hid->pnp(0x02, 0x1234, 0x5678, 0x0100);
     hid->hidInfo(0x00, 0x01);
     hid->reportMap((uint8_t*)HID_REPORT_MAP, sizeof(HID_REPORT_MAP));
     hid->startServices();
 
-    // Configuration de la publicité BLE
     BLEAdvertising *pAdvertising = pServer->getAdvertising();
-    pAdvertising->setAppearance(HID_MOUSE);  // Apparence de souris
+    pAdvertising->setAppearance(HID_MOUSE);
     pAdvertising->addServiceUUID(hid->hidService()->getUUID());
     pAdvertising->start();
 
-    // Configuration de la sécurité BLE
     BLESecurity *pSecurity = new BLESecurity();
     pSecurity->setAuthenticationMode(ESP_LE_AUTH_BOND);
     pSecurity->setCapability(ESP_IO_CAP_NONE);
@@ -152,6 +201,6 @@ void initBluetooth() {
 }
 
 void deinitBluetooth() {
-    BLEDevice::deinit(); 
+    BLEDevice::deinit();
     delay(1000);
 }
