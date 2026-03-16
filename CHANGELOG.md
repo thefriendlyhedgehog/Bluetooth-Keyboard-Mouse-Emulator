@@ -4,6 +4,15 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2.10.0] – 2026-03-16 – ADV Edition
+
+### Added
+- **Portrait UI Overhaul**: Full screen rotation (90 degrees) and adaptive layouts.
+- **Adaptive Layouts**: UI panels now intelligently stack vertically in Portrait mode and side-by-side in Landscape.
+- **Orientation-Aware Icons**: Key icons and text now re-center and resize based on screen orientation.
+
+---
+
 ## [2.9.5] – 2026-03-16 – ADV Edition
 
 ### Added

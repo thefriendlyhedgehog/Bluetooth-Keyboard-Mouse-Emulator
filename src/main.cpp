@@ -66,7 +66,7 @@ void selectMode() {
 void setup() {
     Serial.begin(115200);
     delay(1000); // Give serial time to attach
-    Serial.println("\n\n--- M5 Keyboard/Mouse v2.9.5 Booting ---");
+    Serial.println("\n\n--- M5 Keyboard/Mouse v2.10.0 Booting ---");
 
     auto cfg = M5.config();
     M5Cardputer.begin(cfg, true);
@@ -119,7 +119,7 @@ void setup() {
 
     Serial.println("System initialized.");
 
-    setupDisplay();
+    setupDisplay(portraitMode);
     displayWelcomeScreen();
 
     Serial.println("Selecting mode...");
@@ -151,7 +151,7 @@ void loop() {
     // BT connection status change → refresh indicator
     auto bluetoothStatus = getBluetoothStatus();
     if (lastBluetoothStatus != bluetoothStatus) {
-        modeIndicator(usbMode, bluetoothStatus);
+        modeIndicator(usbMode, bluetoothStatus, portraitMode);
         lastBluetoothStatus = bluetoothStatus;
     }
 
@@ -198,7 +198,7 @@ void loop() {
             }
             if (M5Cardputer.Keyboard.isKeyPressed('p')) {
                 portraitMode = !portraitMode;
-                drawDeviceRect(mouseMode, gyroMode, portraitMode);
+                displayMainScreen(usbMode, mouseMode, lastBluetoothStatus, gyroMode, portraitMode);
                 delay(150);
             }
         }
