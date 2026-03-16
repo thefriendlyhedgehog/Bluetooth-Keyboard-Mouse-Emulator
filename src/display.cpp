@@ -104,7 +104,7 @@ void displayWelcomeScreen() {
 
     M5Cardputer.Display.setCursor(65, 120);
     M5Cardputer.Display.setTextSize(1);
-    M5Cardputer.Display.printf("v3.0 - ADV Edition");
+    M5Cardputer.Display.printf("v2.9.1 - ADV Edition");
 
     delay(2000);
 }

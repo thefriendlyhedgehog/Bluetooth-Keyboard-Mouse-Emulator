@@ -4,26 +4,22 @@ All notable changes to this project are documented here.
 
 ---
 
-## [3.0] – 2026-03-16 – ADV Edition
+## [2.9.1] – 2026-03-16 – ADV Edition
 
 ### Fixed
+- **Keyboard not working**: Key-release (zero) reports were never sent to the host because the `isChange()` guard blocked the empty-key state from being forwarded. Fixed both USB and BLE keyboard paths.
 - **Landscape Gyro X-axis reversed**: Tilt left/right now correctly moves cursor left/right.
+- **Gyro Y-axis inversion**: Up/Down in both Landscape and Portrait now matches physical tilt.
 
 ### Added
 - **SD Card Configuration**: Place `/KBMousePuter/kb_mouse_config.txt` on your SD card to customise settings (e.g. `timeout=5`).
 - **Full State Persistence (NVS)**: Remembers both connection type (USB/BT) *and* input mode (Keyboard/Mouse) across reboots.
-- **Default Auto-Boot Timeout**: Reduced to 2 seconds (was 3s in v2.8).
-
----
-
-## [2.9] – 2026-03-16
-
-### Added
-- SD card initialisation using `/KBMousePuter/kb_mouse_config.txt`.
-- Persistence for `mouseMode` (Keyboard vs Mouse) via NVS.
-
-### Changed
-- Default auto-boot timeout reduced to 2 seconds.
+- **Auto-Boot Timeout**: 2-second countdown on boot (SD-configurable).
+- **Gyro Deadzone** (`0.05f`) to prevent cursor drift.
+- **Portrait Gyro Mode** (`Fn + P`): One-handed vertical use. `Q` = left click, `1` = right click, `Ctrl` = re-center.
+- **`Fn + G`** hotkey to toggle Gyro mode.
+- **F-Key Layer**: `Fn + 1–0` → F1–F10, `-` → F11, `=` → F12.
+- **Ergonomic mouse clicks**: `` ` `` = left click, `Backspace` = right click.
 
 ---
 

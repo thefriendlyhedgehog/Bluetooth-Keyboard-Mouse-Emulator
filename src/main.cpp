@@ -66,7 +66,7 @@ void selectMode() {
 void setup() {
     Serial.begin(115200);
     delay(1000); // Give serial time to attach
-    Serial.println("\n\n--- M5 Keyboard/Mouse v3.0 Booting ---");
+    Serial.println("\n\n--- M5 Keyboard/Mouse v2.9.1 Booting ---");
 
     auto cfg = M5.config();
     M5Cardputer.begin(cfg, true);

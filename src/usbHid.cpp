@@ -126,25 +126,27 @@ void usbKeyboardInit() {
 // USB Keyboard tick
 // -------------------------------------------------------
 void usbKeyboard() {
-    if (!M5Cardputer.Keyboard.isChange()) return;
-
     Keyboard_Class::KeysState status = M5Cardputer.Keyboard.keysState();
+
+    bool anyKey = !status.hid_keys.empty() ||
+                  M5Cardputer.Keyboard.isKeyPressed(' ') ||
+                  status.modifiers != 0 ||
+                  status.opt;
+
+    // Only build and send a report if something changed
+    if (!M5Cardputer.Keyboard.isChange() && !anyKey) return;
 
     KeyReport report = {0};
     report.modifiers = status.modifiers;
-
-    // Map Opt key to GUI (Command/Windows)
-    if (status.opt) report.modifiers |= (1 << 3);
+    if (status.opt) report.modifiers |= (1 << 3); // Opt → GUI
 
     uint8_t idx = 0;
     for (auto k : status.hid_keys) {
         if (idx >= 6) break;
-        // Substitute F-keys when Fn is held
         uint8_t key = status.fn ? fnKeySubstitute(k) : k;
         report.keys[idx++] = key;
     }
 
-    // Space key (not always in hid_keys)
     if (M5Cardputer.Keyboard.isKeyPressed(' ')) {
         const uint8_t HID_SPACE = 0x2C;
         bool present = false;

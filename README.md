@@ -1,6 +1,6 @@
 # M5Stack Cardputer – USB & Bluetooth Keyboard/Mouse Emulator
 
-> **Version 3.0 – ADV Edition**
+> **Version 2.9.1 – ADV Edition**
 
 Turn your M5Stack Cardputer into a full USB **and** Bluetooth HID keyboard *and* mouse — with gyro control, portrait mode, SD-configurable auto-boot, and persistent state across reboots.
 
@@ -30,7 +30,7 @@ Turn your M5Stack Cardputer into a full USB **and** Bluetooth HID keyboard *and*
 3. Click **Burn**.
 
 ### Option B – OTA Flash (Recommended for updates)
-1. Download the latest `M5-Keyboard-Mouse-v3.0-OTA.bin` from [Releases](../../releases).
+1. Download the latest `M5-Keyboard-Mouse-v2.9.1-OTA.bin` from [Releases](../../releases).
 2. Use the [M5Stack OTA Tool](https://flow.m5stack.com/) or `esptool.py` to flash.
 
 ### Option C – Build from Source

@@ -113,9 +113,16 @@ void bluetoothMouse(bool gyroMode, bool portraitMode) {
 void bluetoothKeyboard() {
     Keyboard_Class::KeysState status = M5Cardputer.Keyboard.keysState();
 
+    bool anyKey = !status.hid_keys.empty() ||
+                  M5Cardputer.Keyboard.isKeyPressed(' ') ||
+                  status.modifiers != 0 ||
+                  status.opt;
+
+    // Only send a new report if something changed or keys are still held
+    if (!M5Cardputer.Keyboard.isChange() && !anyKey) return;
+
     uint8_t modifiers = status.modifiers;
-    // Map Opt key to GUI (Command)
-    if (status.opt) modifiers |= (1 << 3); // ESP32 HID bit 3 is GUI
+    if (status.opt) modifiers |= (1 << 3); // Opt → GUI
 
     uint8_t idx = 0;
     uint8_t keys[6] = {0};
@@ -126,7 +133,6 @@ void bluetoothKeyboard() {
         keys[idx++] = key;
     }
 
-    // Space
     if (M5Cardputer.Keyboard.isKeyPressed(' ') && idx < 6) {
         uint8_t HID_SPACE = 0x2C;
         bool present = false;
@@ -138,7 +144,14 @@ void bluetoothKeyboard() {
     keyboardInput->setValue(report, sizeof(report));
     keyboardInput->notify();
 
-    delay(50);
+    // If nothing is held, immediately send a zero report (key-up)
+    if (!anyKey) {
+        uint8_t emptyReport[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+        keyboardInput->setValue(emptyReport, sizeof(emptyReport));
+        keyboardInput->notify();
+    }
+
+    delay(20);
 }
 
 // -------------------------------------------------------
