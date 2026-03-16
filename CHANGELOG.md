@@ -4,6 +4,14 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2.11.3] – 2026-03-16 – ADV Edition
+
+### Fixed
+- **Credits**: Added credit for the original project and clarified that this is an enhanced version.
+- **Version Parity**: Bumped version to v2.11.3 across all files.
+
+---
+
 ## [2.11.2] – 2026-03-16 – ADV Edition
 
 ### Fixed
