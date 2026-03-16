@@ -1,6 +1,6 @@
 # M5 ADV - KB-Mouse – USB & Bluetooth Keyboard/Mouse Emulator
 
-> **Version 2.11.6 – ADV Edition**
+> **Version 2.11.7 – ADV Edition**
 
 **Credit:** This project is a major technical enhancement of the original [Cardputer Keyboard/Mouse Emulator](https://github.com/tp53/Bluetooth-Keyboard-Mouse-Emulator) created by **Geo (tp53.geo)**. This "ADV Edition" extends Geo's professional-grade HID foundation with customized UI logic, persistence, and additional ergonomics.
 
@@ -12,7 +12,7 @@ Turn your M5Stack Cardputer into a full USB **and** Bluetooth HID keyboard *and*
 
 This repository (ADV Edition) is a major evolution of the foundation created by **Geo**. While the base version provides professional Bluetooth and USB connectivity, the ADV Edition focuses on specialized UI and automated usability features:
 
-| Feature | Original Version (Geo) | **ADV Edition (v2.11.6)** |
+| Feature | Original Version (Geo) | **ADV Edition (v2.11.7)** |
 |---|---|---|
 | **Connectivity** | Bluetooth Only | **USB + Bluetooth** |
 | **Mode Swap** | Requires reboot | **G0 Long-Press** |

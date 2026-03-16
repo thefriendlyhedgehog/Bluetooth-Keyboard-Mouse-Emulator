@@ -67,7 +67,7 @@ void selectMode() {
 void setup() {
     Serial.begin(115200);
     delay(1000); // Give serial time to attach
-    Serial.println("\n\n--- M5 ADV - KB-Mouse v2.11.6 Booting ---");
+    Serial.println("\n\n--- M5 ADV - KB-Mouse v2.11.7 Booting ---");
 
     auto cfg = M5.config();
     M5Cardputer.begin(cfg, true);
@@ -202,43 +202,35 @@ void loop() {
     }
 
     // --- Centralized Keyboard Event Handler ---
-    if (M5Cardputer.Keyboard.isChange()) {
-        if (M5Cardputer.Keyboard.isPressed()) {
-            Keyboard_Class::KeysState status = M5Cardputer.Keyboard.keysState();
-            bool changed = false;
-
-            // HOTKEYS (Any Mode)
-            if (status.ctrl) {
-                preferences.begin("settings", false); // Open preferences for writing
-                if (M5Cardputer.Keyboard.isKeyPressed('p')) {
-                    portraitMode = !portraitMode;
-                    preferences.putBool("portraitMode", portraitMode);
-                    changed = true;
-                }
-                if (M5Cardputer.Keyboard.isKeyPressed('g')) {
-                    gyroMode = !gyroMode;
-                    preferences.putBool("gyroMode", gyroMode);
-                    changed = true;
-                }
-                preferences.end(); // Close preferences
+    bool changed = M5Cardputer.Keyboard.isChange();
+    if (changed && M5Cardputer.Keyboard.isPressed()) {
+        // Configuration Toggles via Ctrl (Any Mode)
+        bool ctrlPressed = M5Cardputer.Keyboard.isKeyPressed(KEY_LEFT_CTRL) || M5Cardputer.Keyboard.isKeyPressed(KEY_RIGHT_CTRL);
+        if (ctrlPressed) {
+            bool settingsChanged = false;
+            if (M5Cardputer.Keyboard.isKeyPressed('p')) {
+                portraitMode = !portraitMode;
+                settingsChanged = true;
+            } else if (M5Cardputer.Keyboard.isKeyPressed('g')) {
+                gyroMode = !gyroMode;
+                settingsChanged = true;
             }
 
-            if (changed) {
+            if (settingsChanged) {
+                preferences.begin("settings", false);
+                preferences.putBool("portraitMode", portraitMode);
+                preferences.putBool("gyroMode", gyroMode);
+                preferences.end();
                 displayMainScreen(usbMode, mouseMode, getBluetoothStatus(), gyroMode, portraitMode);
                 delay(200); // Debounce
-            } else if (usbMode) {
-                handleUsbMode(mouseMode, gyroMode, portraitMode, changed);
-            } else {
-                handleBluetoothMode(mouseMode, gyroMode, portraitMode, changed);
             }
         }
-    } else { // If keyboard state didn't change, but we still need to handle modes
-        // Pass 'false' for changed as no key press event occurred
-        if (usbMode) {
-            handleUsbMode(mouseMode, gyroMode, portraitMode, false);
-        } else {
-            handleBluetoothMode(mouseMode, gyroMode, portraitMode, false);
-        }
+    }
+
+    if (usbMode) {
+        handleUsbMode(mouseMode, gyroMode, portraitMode, changed);
+    } else {
+        handleBluetoothMode(mouseMode, gyroMode, portraitMode, changed);
     }
 
     // REMOVED redundant M5Cardputer.update() to fix button event clearing

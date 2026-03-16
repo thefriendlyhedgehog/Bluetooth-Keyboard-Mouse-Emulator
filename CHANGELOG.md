@@ -4,6 +4,14 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2.11.7] – 2026-03-16 – ADV Edition
+
+### Fixed
+- **Hotkey Reliability**: Refactored detection logic in `main.cpp` using a dedicated hotkey handler that doesn't block mode-specific HID reports.
+- **Key Sync**: Ensured `isChange()` events are passed to both USB and Bluetooth handlers to prevent "stuck keys" on the host.
+
+---
+
 ## [2.11.6] – 2026-03-16 – ADV Edition
 
 ### Fixed
