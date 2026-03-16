@@ -4,6 +4,17 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2.11.6] – 2026-03-16 – ADV Edition
+
+### Fixed
+- **Hotkey Consistency**: Fixed Ctrl-based hotkeys (`Ctrl+P` for Portrait, `Ctrl+G` for Gyro) to work reliably using `keysState()`.
+- **UI Restoration**: Moved USB and Bluetooth status indicators back to the top of the screen in Landscape mode.
+
+### Changed
+- **Landscape Layout**: Restored dual horizontal status boxes at the top and side-by-side panel widths.
+
+---
+
 ## [2.11.5] – 2026-03-16 – ADV Edition
 
 ### Changed

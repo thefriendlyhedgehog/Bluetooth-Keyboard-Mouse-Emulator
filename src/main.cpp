@@ -67,7 +67,7 @@ void selectMode() {
 void setup() {
     Serial.begin(115200);
     delay(1000); // Give serial time to attach
-    Serial.println("\n\n--- M5 ADV - KB-Mouse v2.11.5 Booting ---");
+    Serial.println("\n\n--- M5 ADV - KB-Mouse v2.11.6 Booting ---");
 
     auto cfg = M5.config();
     M5Cardputer.begin(cfg, true);
@@ -202,30 +202,43 @@ void loop() {
     }
 
     // --- Centralized Keyboard Event Handler ---
-    bool changed = M5Cardputer.Keyboard.isChange();
-    if (changed && M5Cardputer.Keyboard.isPressed()) {
-        // Configuration Toggles via Ctrl
-        if (mouseMode) {
-            bool ctrlPressed = M5Cardputer.Keyboard.isKeyPressed(KEY_LEFT_CTRL) || M5Cardputer.Keyboard.isKeyPressed(KEY_RIGHT_CTRL);
-            if (ctrlPressed) {
+    if (M5Cardputer.Keyboard.isChange()) {
+        if (M5Cardputer.Keyboard.isPressed()) {
+            Keyboard_Class::KeysState status = M5Cardputer.Keyboard.keysState();
+            bool changed = false;
+
+            // HOTKEYS (Any Mode)
+            if (status.ctrl) {
+                preferences.begin("settings", false); // Open preferences for writing
                 if (M5Cardputer.Keyboard.isKeyPressed('p')) {
                     portraitMode = !portraitMode;
-                    displayMainScreen(usbMode, mouseMode, lastBluetoothStatus, gyroMode, portraitMode);
-                    delay(200);
+                    preferences.putBool("portraitMode", portraitMode);
+                    changed = true;
                 }
                 if (M5Cardputer.Keyboard.isKeyPressed('g')) {
                     gyroMode = !gyroMode;
-                    displayMainScreen(usbMode, mouseMode, lastBluetoothStatus, gyroMode, portraitMode);
-                    delay(200);
+                    preferences.putBool("gyroMode", gyroMode);
+                    changed = true;
                 }
+                preferences.end(); // Close preferences
+            }
+
+            if (changed) {
+                displayMainScreen(usbMode, mouseMode, getBluetoothStatus(), gyroMode, portraitMode);
+                delay(200); // Debounce
+            } else if (usbMode) {
+                handleUsbMode(mouseMode, gyroMode, portraitMode, changed);
+            } else {
+                handleBluetoothMode(mouseMode, gyroMode, portraitMode, changed);
             }
         }
-    }
-
-    if (usbMode) {
-        handleUsbMode(mouseMode, gyroMode, portraitMode, changed);
-    } else {
-        handleBluetoothMode(mouseMode, gyroMode, portraitMode, changed);
+    } else { // If keyboard state didn't change, but we still need to handle modes
+        // Pass 'false' for changed as no key press event occurred
+        if (usbMode) {
+            handleUsbMode(mouseMode, gyroMode, portraitMode, false);
+        } else {
+            handleBluetoothMode(mouseMode, gyroMode, portraitMode, false);
+        }
     }
 
     // REMOVED redundant M5Cardputer.update() to fix button event clearing
