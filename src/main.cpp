@@ -15,7 +15,7 @@ bool usbMode          = true;
 bool gyroMode         = false;
 bool portraitMode     = false;
 bool lastBluetoothStatus = false;
-int  bootTimeout      = 2; // Default 2 seconds
+int  bootTimeout      = 1; // Default 1 second
 
 // -------------------------------------------------------
 // Startup: USB or BLE mode selection with Auto-boot
@@ -66,7 +66,7 @@ void selectMode() {
 void setup() {
     Serial.begin(115200);
     delay(1000); // Give serial time to attach
-    Serial.println("\n\n--- M5 Keyboard/Mouse v2.9.3 Booting ---");
+    Serial.println("\n\n--- M5 Keyboard/Mouse v2.9.4 Booting ---");
 
     auto cfg = M5.config();
     M5Cardputer.begin(cfg, true);
@@ -78,6 +78,22 @@ void setup() {
     SPIClass* hspi = new SPIClass(HSPI);
     hspi->begin(40, 39, 14, 12); // Cardputer SD pins
     if (SD.begin(12, *hspi, 1000000)) {
+        // 1a. Ensure directory exists
+        if (!SD.exists("/KBMousePuter")) {
+            SD.mkdir("/KBMousePuter");
+            Serial.println("SD: Created /KBMousePuter directory");
+        }
+
+        // 1b. Load or Create config
+        if (!SD.exists("/KBMousePuter/kb_mouse_config.txt")) {
+            File configFile = SD.open("/KBMousePuter/kb_mouse_config.txt", FILE_WRITE);
+            if (configFile) {
+                configFile.println("timeout=1");
+                configFile.close();
+                Serial.println("SD: Created default kb_mouse_config.txt");
+            }
+        }
+
         File configFile = SD.open("/KBMousePuter/kb_mouse_config.txt", FILE_READ);
         if (configFile) {
             while (configFile.available()) {

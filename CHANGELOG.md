@@ -4,6 +4,14 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2.9.4] – 2026-03-16 – ADV Edition
+
+### Added
+- **SD Auto-Setup**: Now automatically creates the `/KBMousePuter/` folder and `kb_mouse_config.txt` on the SD card if missing.
+- **Boot Optimization**: Default auto-boot timeout lowered to **1 second**.
+
+---
+
 ## [2.9.3] – 2026-03-16 – ADV Edition
 
 ### Added
