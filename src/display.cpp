@@ -7,19 +7,24 @@ void drawDeviceRect(bool mouseMode, bool gyroMode, bool portraitMode) {
 
     if (portraitMode) {
         // Portrait: Stacked layout (Keyboard top, Mouse bottom)
+        // panels centered in left 115px (x=8, w=100)
+        int pX = 8;
+        int pW = 100;
+        int pH = (h - 80) / 2 - 5;
+        
         // Keyboard Panel (Top)
-        M5Cardputer.Display.drawRoundRect(5, 70, w - 10, (h - 80) / 2 - 5, 3, mouseMode ? TFT_WHITE : TFT_GREEN);
+        M5Cardputer.Display.drawRoundRect(pX, 70, pW, pH, 3, mouseMode ? TFT_WHITE : TFT_GREEN);
         // Mouse Panel (Bottom)
-        M5Cardputer.Display.drawRoundRect(5, 70 + (h - 80) / 2 + 5, w - 10, (h - 80) / 2 - 5, 3, mouseMode ? TFT_GREEN : TFT_WHITE);
+        M5Cardputer.Display.drawRoundRect(pX, 70 + pH + 5, pW, pH, 3, mouseMode ? TFT_GREEN : TFT_WHITE);
         
         if (mouseMode && gyroMode) {
             M5Cardputer.Display.setTextColor(TFT_CYAN);
             M5Cardputer.Display.setTextSize(1);
-            M5Cardputer.Display.setCursor(w - 40, h - 20);
+            M5Cardputer.Display.setCursor(pX + 5, 70 + pH + 5 + pH - 15);
             M5Cardputer.Display.print("GYRO");
         }
     } else {
-        // Landscape: Side-by-side layout
+        // Landscape: Side-by-side layout (Standard)
         M5Cardputer.Display.drawRoundRect(10, 70, w / 2 - 15, h - 80, 3, mouseMode ? TFT_WHITE : TFT_GREEN);
         M5Cardputer.Display.drawRoundRect(w / 2 + 5, 70, w / 2 - 15, h - 80, 3, mouseMode ? TFT_GREEN : TFT_WHITE);
         
@@ -50,29 +55,41 @@ void drawKeyboardIcon(uint8_t x, uint8_t y) {
 
 void modeIndicator(bool usbMode, bool bluetoothStatus, bool portraitMode) {
     int w = M5Cardputer.Display.width();
-    int rectW = 104;
-    int rectH = 20;
-    int x, y;
+    int h = M5Cardputer.Display.height();
+    uint16_t color = (bluetoothStatus || usbMode) ? TFT_GREEN : TFT_RED;
 
     if (portraitMode) {
-        x = (w - rectW) / 2;
-        y = 35;
+        // Vertical indicator on the right side
+        int barX = 115;
+        int barY = 70;
+        int barW = 15;
+        int barH = h - 80;
+        
+        M5Cardputer.Display.drawRoundRect(barX, barY, barW, barH, 3, color);
+        M5Cardputer.Display.setTextColor(color);
+        M5Cardputer.Display.setTextSize(1);
+        
+        const char* txt = usbMode ? "USB" : "BT";
+        int len = strlen(txt);
+        for(int i=0; i<len; i++) {
+            M5Cardputer.Display.setCursor(barX + 4, barY + 30 + i*20);
+            M5Cardputer.Display.print(txt[i]);
+        }
     } else {
-        x = 10;
-        y = 39;
-    }
+        int rectW = 104;
+        int rectH = 20;
+        int x = 10, y = 39;
+        M5Cardputer.Display.drawRoundRect(x, y, rectW, rectH, 5, color);
+        M5Cardputer.Display.setTextColor(color);
+        M5Cardputer.Display.setTextSize(1.6);
 
-    uint16_t color = (bluetoothStatus || usbMode) ? TFT_GREEN : TFT_RED;
-    M5Cardputer.Display.drawRoundRect(x, y, rectW, rectH, 5, color);
-    M5Cardputer.Display.setTextColor(color);
-    M5Cardputer.Display.setTextSize(1.6);
-
-    if (usbMode) {
-        M5Cardputer.Display.setCursor(x + 40, y + 4);
-        M5Cardputer.Display.print("USB");
-    } else {
-        M5Cardputer.Display.setCursor(x + 13, y + 4);
-        M5Cardputer.Display.print("Bluetooth");
+        if (usbMode) {
+            M5Cardputer.Display.setCursor(x + 40, y + 4);
+            M5Cardputer.Display.print("USB");
+        } else {
+            M5Cardputer.Display.setCursor(x + 13, y + 4);
+            M5Cardputer.Display.print("Bluetooth");
+        }
     }
 }
 
@@ -86,13 +103,13 @@ void displayWelcomeScreen() {
     M5Cardputer.Display.fillScreen(TFT_BLACK);
     M5Cardputer.Display.drawRect(9, 47, 220, 40, TFT_LIGHTGRAY);
     M5Cardputer.Display.setTextColor(TFT_LIGHTGRAY);
-    M5Cardputer.Display.setCursor(18, 58);
+    M5Cardputer.Display.setCursor(18, 55);
     M5Cardputer.Display.setTextSize(2);
-    M5Cardputer.Display.printf("M5-Keyboard-Mouse");
+    M5Cardputer.Display.printf("M5 ADV - KB-Mouse"); 
 
     M5Cardputer.Display.setCursor(60, 120);
     M5Cardputer.Display.setTextSize(1);
-    M5Cardputer.Display.printf("v2.10 - ADV Edition");
+    M5Cardputer.Display.printf("v2.10.1 - ADV Edition");
     delay(2000);
 }
 
@@ -105,9 +122,9 @@ void displayMainScreen(bool usbMode, bool mouseMode, bool bluetoothStatus, bool 
     // Header
     M5Cardputer.Display.fillRoundRect(5, 5, w - 10, 25, 5, TFT_LIGHTGREY);
     M5Cardputer.Display.setCursor(portraitMode ? 10 : 19, 10);
-    M5Cardputer.Display.setTextSize(portraitMode ? 1.5 : 2);
+    M5Cardputer.Display.setTextSize(portraitMode ? 1.4 : 2);
     M5Cardputer.Display.setTextColor(TFT_BLACK);
-    M5Cardputer.Display.print("M5-Keyboard-Mouse");
+    M5Cardputer.Display.print("M5 ADV - KB-Mouse"); 
  
     // Indicators
     modeIndicator(usbMode, bluetoothStatus, portraitMode);
@@ -123,9 +140,14 @@ void displayMainScreen(bool usbMode, bool mouseMode, bool bluetoothStatus, bool 
     drawDeviceRect(mouseMode, gyroMode, portraitMode);
     
     if (portraitMode) {
-        int midY = 70 + (M5Cardputer.Display.height() - 80) / 4;
-        drawKeyboardIcon((w - 40) / 2, midY - 10);
-        drawMouseIcon((w - 25) / 2, midY + (M5Cardputer.Display.height() - 80) / 2);
+        // Panels are centered in 115px wide area (x=8, w=100)
+        int panelCenterX = 8 + 50; 
+        int pH = (M5Cardputer.Display.height() - 80) / 2 - 5;
+        int topPanelMidY = 70 + pH / 2;
+        int botPanelMidY = 70 + pH + 5 + pH / 2;
+        
+        drawKeyboardIcon(panelCenterX - 20, topPanelMidY - 10);
+        drawMouseIcon(panelCenterX - 12, botPanelMidY - 17);
     } else {
         drawKeyboardIcon(42, 87);
         drawMouseIcon(165, 80);

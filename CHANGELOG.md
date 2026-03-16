@@ -4,6 +4,15 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2.10.1] – 2026-03-16 – ADV Edition
+
+### Added
+- **Portrait UI Refinements**: Main panels now shrink and center for better ergonomics.
+- **Vertical Connection Indicator**: USB/BT status is now a sleek vertical side-bar in Portrait mode.
+- **Updated Branding**: Header changed to **"M5 ADV - KB-Mouse"** across all modes.
+
+---
+
 ## [2.10.0] – 2026-03-16 – ADV Edition
 
 ### Added
