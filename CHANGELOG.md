@@ -4,6 +4,14 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2.9.5] – 2026-03-16 – ADV Edition
+
+### Added
+- **User Guide**: Comprehensive documentation for all keyboard layers, mouse controls, and SD settings in `README.md`.
+- **Key Discovery**: Documented `Opt` key as **GUI (Win/Cmd)** and all `Fn` shortcuts.
+
+---
+
 ## [2.9.4] – 2026-03-16 – ADV Edition
 
 ### Added
