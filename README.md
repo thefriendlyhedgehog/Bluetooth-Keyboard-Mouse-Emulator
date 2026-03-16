@@ -1,8 +1,8 @@
 # M5 ADV - KB-Mouse – USB & Bluetooth Keyboard/Mouse Emulator
 
-> **Version 2.11.3 – ADV Edition**
+> **Version 2.11.4 – ADV Edition**
 
-**Credit:** This project is a major technical enhancement of the original [Cardputer Keyboard/Mouse Emulator](https://github.com/m5stack/M5Cardputer-UserDemo) by the M5Stack team and community contributors. This "ADV Edition" extends the original foundation with professional-grade HID features and customized UI logic.
+**Credit:** This project is a major technical enhancement of the original [Cardputer Keyboard/Mouse Emulator](https://github.com/tp53/Bluetooth-Keyboard-Mouse-Emulator) created by **Geo (tp53.geo)**. This "ADV Edition" extends Geo's professional-grade HID foundation with customized UI logic, persistence, and additional ergonomics.
 
 Turn your M5Stack Cardputer into a full USB **and** Bluetooth HID keyboard *and* mouse — with gyro control, portrait mode, SD-configurable auto-boot, and persistent state across reboots.
 
@@ -10,9 +10,9 @@ Turn your M5Stack Cardputer into a full USB **and** Bluetooth HID keyboard *and*
 
 ## 🚀 Why use the ADV Edition?
 
-This repository (ADV Edition) is a major evolution of the original Keyboard/Mouse emulator. While the base version only provides basic Bluetooth connectivity and arrow-key mouse movement, the ADV Edition adds:
+This repository (ADV Edition) is a major evolution of the foundation created by **Geo**. While the base version provides professional Bluetooth and USB connectivity, the ADV Edition focuses on specialized UI and automated usability features:
 
-| Feature | Original Version | **ADV Edition (v2.11.3)** |
+| Feature | Original Version (Geo) | **ADV Edition (v2.11.4)** |
 |---|---|---|
 | **Connectivity** | Bluetooth Only | **USB + Bluetooth** |
 | **Mode Swap** | Requires reboot | **G0 Long-Press** |
@@ -56,7 +56,7 @@ This repository (ADV Edition) is a major evolution of the original Keyboard/Mous
 3. Click **Burn**.
 
 ### Option B – OTA Flash (Recommended for updates)
-1. Download the latest `M5-Keyboard-Mouse-v2.11.3-OTA.bin` from [Releases](../../releases).
+1. Download the latest `M5-Keyboard-Mouse-v2.11.4-OTA.bin` from [Releases](../../releases).
 2. Use the [M5Stack OTA Tool](https://flow.m5stack.com/) or `esptool.py` to flash.
 
 ### Option C – Build from Source

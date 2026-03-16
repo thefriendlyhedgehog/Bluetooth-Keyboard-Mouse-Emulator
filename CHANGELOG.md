@@ -4,6 +4,14 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2.11.4] – 2026-03-16 – ADV Edition
+
+### Fixed
+- **Credits**: Specifically credited **Geo (tp53.geo)** as the original creator of the foundation.
+- **Version Parity**: Bumped version to v2.11.4 across all files.
+
+---
+
 ## [2.11.3] – 2026-03-16 – ADV Edition
 
 ### Fixed

@@ -67,7 +67,7 @@ void selectMode() {
 void setup() {
     Serial.begin(115200);
     delay(1000); // Give serial time to attach
-    Serial.println("\n\n--- M5 ADV - KB-Mouse v2.11.3 Booting ---");
+    Serial.println("\n\n--- M5 ADV - KB-Mouse v2.11.4 Booting ---");
 
     auto cfg = M5.config();
     M5Cardputer.begin(cfg, true);
