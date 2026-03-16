@@ -4,6 +4,15 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2.11.9] – 2026-03-16 – ADV Edition
+
+### Changed
+- **Gyro Sensitivity**: Reduced `GYRO_DEADZONE` to `0.035f` for more responsive cursor control.
+- **Workflow Optimization**: Auto-enables Gyro and Mouse mode when entering Portrait mode (`Ctrl + P`).
+- **UI Responsiveness**: Forced immediate screen refresh after hotkey toggles to prevent visual artifacts.
+
+---
+
 ## [2.11.8] – 2026-03-16 – ADV Edition
 
 ### Fixed

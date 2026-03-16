@@ -67,7 +67,7 @@ void selectMode() {
 void setup() {
     Serial.begin(115200);
     delay(1000); // Give serial time to attach
-    Serial.println("\n\n--- M5 ADV - KB-Mouse v2.11.8 Booting ---");
+    Serial.println("\n\n--- M5 ADV - KB-Mouse v2.11.9 Booting ---");
 
     auto cfg = M5.config();
     M5Cardputer.begin(cfg, true);
@@ -212,21 +212,30 @@ void loop() {
             // Robust check: 'p', 'P', or Ctrl+P (ASCII 16)
             if (M5Cardputer.Keyboard.isKeyPressed('p') || M5Cardputer.Keyboard.isKeyPressed('P') || M5Cardputer.Keyboard.isKeyPressed(16)) {
                 portraitMode = !portraitMode;
+                // Auto-enable gyro when entering portrait
+                if (portraitMode) {
+                    gyroMode = true;
+                    mouseMode = true; // Portrait is strictly a mouse mode in this app
+                }
                 settingsChanged = true;
-                Serial.println("Hotkey: Ctrl+P -> Toggle Portrait");
+                Serial.printf("Hotkey: Ctrl+P -> Portrait: %s, Gyro: %s\n", portraitMode?"ON":"OFF", gyroMode?"ON":"OFF");
             } 
             // Robust check: 'g', 'G', or Ctrl+G (ASCII 7)
             else if (M5Cardputer.Keyboard.isKeyPressed('g') || M5Cardputer.Keyboard.isKeyPressed('G') || M5Cardputer.Keyboard.isKeyPressed(7)) {
                 gyroMode = !gyroMode;
+                if (gyroMode) mouseMode = true; // Gyro requires mouse mode
                 settingsChanged = true;
-                Serial.println("Hotkey: Ctrl+G -> Toggle Gyro");
+                Serial.printf("Hotkey: Ctrl+G -> Gyro: %s\n", gyroMode?"ON":"OFF");
             }
 
             if (settingsChanged) {
                 preferences.begin("settings", false);
                 preferences.putBool("portraitMode", portraitMode);
                 preferences.putBool("gyroMode", gyroMode);
+                preferences.putBool("mouseMode", mouseMode);
                 preferences.end();
+                
+                // Immediate Full Refresh to clear artifacts
                 displayMainScreen(usbMode, mouseMode, getBluetoothStatus(), gyroMode, portraitMode);
                 delay(200); // Debounce
             }

@@ -22,7 +22,7 @@ extern bool bluetoothIsConnected;
 // Gyro sensitivity scale
 #define GYRO_SCALE   30.0f
 // Gyro deadzone to prevent jitter
-#define GYRO_DEADZONE 0.05f
+#define GYRO_DEADZONE 0.035f
 
 const uint8_t HID_REPORT_MAP[] = {
     // ---- Mouse report (ID 1) ----
