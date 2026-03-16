@@ -4,6 +4,14 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2.11.5] – 2026-03-16 – ADV Edition
+
+### Changed
+- **Repo Cleanup**: Migrated all `.bin` files out of the git repository to GitHub Releases.
+- **Repository Optimization**: Updated `.gitignore` to prevent binary tracking.
+
+---
+
 ## [2.11.4] – 2026-03-16 – ADV Edition
 
 ### Fixed

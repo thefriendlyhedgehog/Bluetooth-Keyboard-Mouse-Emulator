@@ -10,15 +10,5 @@
 
 # Old binary releases (keep only latest)
 M5-Keyboard-Mouse-v2-OTA.bin
-M5-Keyboard-Mouse-v2.5-OTA.bin
-M5-Keyboard-Mouse-v2.6-OTA.bin
-M5-Keyboard-Mouse-v2.7-OTA.bin
-M5-Keyboard-Mouse-v2.7.1-OTA.bin
-M5-Keyboard-Mouse-v2.8-OTA.bin
-M5-Keyboard-Mouse-v2.9-OTA.bin
-M5-Keyboard-Mouse-v2.9.1-OTA.bin
-M5-Keyboard-Mouse-v2.9.2-OTA.bin
-M5-Keyboard-Mouse-v2.9.3-OTA.bin
-M5-Keyboard-Mouse-v2.9.4-OTA.bin
-M5-Keyboard-Mouse-v2.9.5-OTA.bin
-M5-Keyboard-Mouse-v3.0-OTA.bin
+# Binaries
+*.bin

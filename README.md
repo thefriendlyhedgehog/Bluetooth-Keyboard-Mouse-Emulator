@@ -1,6 +1,6 @@
 # M5 ADV - KB-Mouse – USB & Bluetooth Keyboard/Mouse Emulator
 
-> **Version 2.11.4 – ADV Edition**
+> **Version 2.11.5 – ADV Edition**
 
 **Credit:** This project is a major technical enhancement of the original [Cardputer Keyboard/Mouse Emulator](https://github.com/tp53/Bluetooth-Keyboard-Mouse-Emulator) created by **Geo (tp53.geo)**. This "ADV Edition" extends Geo's professional-grade HID foundation with customized UI logic, persistence, and additional ergonomics.
 
@@ -12,7 +12,7 @@ Turn your M5Stack Cardputer into a full USB **and** Bluetooth HID keyboard *and*
 
 This repository (ADV Edition) is a major evolution of the foundation created by **Geo**. While the base version provides professional Bluetooth and USB connectivity, the ADV Edition focuses on specialized UI and automated usability features:
 
-| Feature | Original Version (Geo) | **ADV Edition (v2.11.4)** |
+| Feature | Original Version (Geo) | **ADV Edition (v2.11.5)** |
 |---|---|---|
 | **Connectivity** | Bluetooth Only | **USB + Bluetooth** |
 | **Mode Swap** | Requires reboot | **G0 Long-Press** |
@@ -55,9 +55,10 @@ This repository (ADV Edition) is a major evolution of the foundation created by 
 2. Search for **"Keyboard Mouse Emulator"** in the **CARDPUTER** section.
 3. Click **Burn**.
 
-### Option B – OTA Flash (Recommended for updates)
-1. Download the latest `M5-Keyboard-Mouse-v2.11.4-OTA.bin` from [Releases](../../releases).
-2. Use the [M5Stack OTA Tool](https://flow.m5stack.com/) or `esptool.py` to flash.
+### Option B – OTA Flash (Recommended)
+1. Go to the [Releases](../../releases) section of this repository.
+2. Download the latest `.bin` file (e.g., `M5-Keyboard-Mouse-v2.11.4-OTA.bin`).
+3. Use the [M5Stack OTA Tool](https://flow.m5stack.com/) or `esptool.py` to flash.
 
 ### Option C – Build from Source
 ```bash
