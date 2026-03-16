@@ -125,7 +125,7 @@ void usbKeyboardInit() {
 // -------------------------------------------------------
 // USB Keyboard tick
 // -------------------------------------------------------
-void usbKeyboard() {
+void usbKeyboard(bool changed) {
     Keyboard_Class::KeysState status = M5Cardputer.Keyboard.keysState();
 
     bool anyKey = !status.hid_keys.empty() ||
@@ -133,8 +133,8 @@ void usbKeyboard() {
                   status.modifiers != 0 ||
                   status.opt;
 
-    // Only build and send a report if something changed
-    if (!M5Cardputer.Keyboard.isChange() && !anyKey) return;
+    // Only send a report if something changed or keys are still held
+    if (!changed && !anyKey) return;
 
     KeyReport report = {0};
     report.modifiers = status.modifiers;
@@ -164,11 +164,11 @@ void usbKeyboard() {
 // -------------------------------------------------------
 // Mode dispatcher
 // -------------------------------------------------------
-void handleUsbMode(bool mouseMode, bool gyroMode, bool portraitMode) {
+void handleUsbMode(bool mouseMode, bool gyroMode, bool portraitMode, bool changed) {
     if (mouseMode) {
         usbMouse(gyroMode, portraitMode);
     } else {
-        usbKeyboard();
+        usbKeyboard(changed);
     }
     delay(5);
 }

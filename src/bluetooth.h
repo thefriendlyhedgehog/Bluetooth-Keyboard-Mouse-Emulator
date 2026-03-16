@@ -103,9 +103,9 @@ void deinitBluetooth();
 bool getBluetoothStatus();
 
 void bluetoothMouse(bool gyroMode, bool portraitMode);
-void bluetoothKeyboard();
+void bluetoothKeyboard(bool changed);
 void sendEmptyReports();
-void handleBluetoothMode(bool mouseMode, bool gyroMode, bool portraitMode);
+void handleBluetoothMode(bool mouseMode, bool gyroMode, bool portraitMode, bool changed);
 
 class MyBLEServerCallbacks : public BLEServerCallbacks {
 public:

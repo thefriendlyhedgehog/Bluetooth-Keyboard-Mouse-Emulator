@@ -110,7 +110,7 @@ void bluetoothMouse(bool gyroMode, bool portraitMode) {
 // -------------------------------------------------------
 // BLE Keyboard tick
 // -------------------------------------------------------
-void bluetoothKeyboard() {
+void bluetoothKeyboard(bool changed) {
     Keyboard_Class::KeysState status = M5Cardputer.Keyboard.keysState();
 
     bool anyKey = !status.hid_keys.empty() ||
@@ -118,8 +118,8 @@ void bluetoothKeyboard() {
                   status.modifiers != 0 ||
                   status.opt;
 
-    // Only send a new report if something changed or keys are still held
-    if (!M5Cardputer.Keyboard.isChange() && !anyKey) return;
+    // Only send a report if something changed or keys are still held
+    if (!changed && !anyKey) return;
 
     uint8_t modifiers = status.modifiers;
     if (status.opt) modifiers |= (1 << 3); // Opt → GUI
@@ -169,14 +169,14 @@ void sendEmptyReports() {
 // -------------------------------------------------------
 // Mode dispatcher
 // -------------------------------------------------------
-void handleBluetoothMode(bool mouseMode, bool gyroMode, bool portraitMode) {
+void handleBluetoothMode(bool mouseMode, bool gyroMode, bool portraitMode, bool changed) {
     if (bluetoothIsConnected) {
         bool pressed = M5Cardputer.Keyboard.isPressed();
         // In gyro mode we always need to send mouse reports (device may be tilted)
         if (mouseMode && (gyroMode || pressed)) {
             bluetoothMouse(gyroMode, portraitMode);
-        } else if (!mouseMode && pressed) {
-            bluetoothKeyboard();
+        } else if (!mouseMode && (changed || pressed)) {
+            bluetoothKeyboard(changed);
         } else {
             sendEmptyReports();
         }

@@ -66,7 +66,7 @@ void selectMode() {
 void setup() {
     Serial.begin(115200);
     delay(1000); // Give serial time to attach
-    Serial.println("\n\n--- M5 Keyboard/Mouse v2.9.1 Booting ---");
+    Serial.println("\n\n--- M5 Keyboard/Mouse v2.9.2 Booting ---");
 
     auto cfg = M5.config();
     M5Cardputer.begin(cfg, true);
@@ -169,7 +169,8 @@ void loop() {
     }
 
     // --- Centralized Keyboard Event Handler ---
-    if (M5Cardputer.Keyboard.isChange() && M5Cardputer.Keyboard.isPressed()) {
+    bool changed = M5Cardputer.Keyboard.isChange();
+    if (changed && M5Cardputer.Keyboard.isPressed()) {
         Keyboard_Class::KeysState status = M5Cardputer.Keyboard.keysState();
         
         // Handle Fn hotkeys ONLY in mouse mode to avoid typing conflicts
@@ -188,9 +189,9 @@ void loop() {
     }
 
     if (usbMode) {
-        handleUsbMode(mouseMode, gyroMode, portraitMode);
+        handleUsbMode(mouseMode, gyroMode, portraitMode, changed);
     } else {
-        handleBluetoothMode(mouseMode, gyroMode, portraitMode);
+        handleBluetoothMode(mouseMode, gyroMode, portraitMode, changed);
     }
 
     M5Cardputer.update();

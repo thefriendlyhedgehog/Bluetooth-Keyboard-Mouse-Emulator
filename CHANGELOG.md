@@ -4,6 +4,14 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2.9.2] – 2026-03-16 – ADV Edition
+
+### Fixed
+- **Stuck keys / Auto-pressing (F11)**: Fixed a race condition where the hotkey handler in `main.cpp` would consume the "key change" event before the USB/Bluetooth HID dispatchers could see it, causing key releases to be missed.
+- **Keyboard Reliability**: Unified keyboard state detection to ensure consistent report delivery across all modes.
+
+---
+
 ## [2.9.1] – 2026-03-16 – ADV Edition
 
 ### Fixed
