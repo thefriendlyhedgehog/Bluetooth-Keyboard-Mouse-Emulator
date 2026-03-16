@@ -67,7 +67,7 @@ void selectMode() {
 void setup() {
     Serial.begin(115200);
     delay(1000); // Give serial time to attach
-    Serial.println("\n\n--- M5 ADV - KB-Mouse v2.11.7 Booting ---");
+    Serial.println("\n\n--- M5 ADV - KB-Mouse v2.11.8 Booting ---");
 
     auto cfg = M5.config();
     M5Cardputer.begin(cfg, true);
@@ -204,16 +204,22 @@ void loop() {
     // --- Centralized Keyboard Event Handler ---
     bool changed = M5Cardputer.Keyboard.isChange();
     if (changed && M5Cardputer.Keyboard.isPressed()) {
+        Keyboard_Class::KeysState status = M5Cardputer.Keyboard.keysState();
+        
         // Configuration Toggles via Ctrl (Any Mode)
-        bool ctrlPressed = M5Cardputer.Keyboard.isKeyPressed(KEY_LEFT_CTRL) || M5Cardputer.Keyboard.isKeyPressed(KEY_RIGHT_CTRL);
-        if (ctrlPressed) {
+        if (status.ctrl) {
             bool settingsChanged = false;
-            if (M5Cardputer.Keyboard.isKeyPressed('p')) {
+            // Robust check: 'p', 'P', or Ctrl+P (ASCII 16)
+            if (M5Cardputer.Keyboard.isKeyPressed('p') || M5Cardputer.Keyboard.isKeyPressed('P') || M5Cardputer.Keyboard.isKeyPressed(16)) {
                 portraitMode = !portraitMode;
                 settingsChanged = true;
-            } else if (M5Cardputer.Keyboard.isKeyPressed('g')) {
+                Serial.println("Hotkey: Ctrl+P -> Toggle Portrait");
+            } 
+            // Robust check: 'g', 'G', or Ctrl+G (ASCII 7)
+            else if (M5Cardputer.Keyboard.isKeyPressed('g') || M5Cardputer.Keyboard.isKeyPressed('G') || M5Cardputer.Keyboard.isKeyPressed(7)) {
                 gyroMode = !gyroMode;
                 settingsChanged = true;
+                Serial.println("Hotkey: Ctrl+G -> Toggle Gyro");
             }
 
             if (settingsChanged) {

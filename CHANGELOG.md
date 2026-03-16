@@ -4,6 +4,14 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2.11.8] – 2026-03-16 – ADV Edition
+
+### Fixed
+- **Robust Hotkeys**: Implemented a wider detection range for `Ctrl + P` and `Ctrl + G`, including support for control codes (ASCII 16 and 7) and case-insensitive matching.
+- **Serial Debugging**: Added serial output for hotkey triggers to assist with future troubleshooting.
+
+---
+
 ## [2.11.7] – 2026-03-16 – ADV Edition
 
 ### Fixed
