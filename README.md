@@ -6,6 +6,29 @@ Turn your M5Stack Cardputer into a full USB **and** Bluetooth HID keyboard *and*
 
 ---
 
+## 🚀 Why use the ADV Edition?
+
+This repository (ADV Edition) is a major evolution of the original Keyboard/Mouse emulator. While the base version only provides basic Bluetooth connectivity and arrow-key mouse movement, the ADV Edition adds:
+
+| Feature | Original Version | **ADV Edition (v2.9.1)** |
+|---|---|---|
+| **Connectivity** | Bluetooth Only | **USB + Bluetooth** |
+| **Mouse Control** | Arrow keys only | **Arrow keys + Gyro (Tilt)** |
+| **Persistence** | None (starts fresh) | **Saved states (remembers modes)** |
+| **Startup** | Manual selection | **Auto-boot with countdown** |
+| **Configurability** | Hardcoded | **SD Card overrides** |
+| **Ergonomics** | Limited | **Portrait Mode + Optimized Clicks** |
+| **Compatibility** | Basic layers | **Full F-Key mapping (Fn+1-0)** |
+
+### Major Enhancements:
+- **Full USB HID Support**: Acts as a physical wired mouse/keyboard.
+- **Precision Gyro Control**: High-refresh IMU mapping with deadzone to prevent drift.
+- **State Memory**: Powers on exactly how you left it (e.g., if you were using it as a Bluetooth Mouse, it boots as a Bluetooth Mouse).
+- **One-Handed Use**: Portrait mode allows you to hold the Cardputer like a remote control.
+- **SD Config**: Customize the boot delay via `/KBMousePuter/kb_mouse_config.txt`.
+
+---
+
 ## ✨ Features
 
 | Feature | Details |
