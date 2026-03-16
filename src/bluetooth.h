@@ -101,7 +101,6 @@ const uint8_t HID_REPORT_MAP[] = {
 void initBluetooth();
 void deinitBluetooth();
 bool getBluetoothStatus();
-
 void bluetoothMouse(bool gyroMode, bool portraitMode);
 void bluetoothKeyboard(bool changed);
 void sendEmptyReports();

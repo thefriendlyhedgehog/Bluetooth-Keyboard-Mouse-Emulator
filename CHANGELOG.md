@@ -4,6 +4,15 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2.11.0] – 2026-03-16 – ADV Edition
+
+### Added
+- **Dynamic Mode Swap (Fn+M)**: Switch between USB and Bluetooth in real-time without needing to reboot the device.
+- **Dual Connection Sidebar**: Portrait mode now shows both USB and BT status simultaneously in the right-side bar.
+- **Refined Portrait Header**: Tightened text spacing to ensure "M5 ADV - KB-Mouse" fits on a single line in Portrait mode.
+
+---
+
 ## [2.10.1] – 2026-03-16 – ADV Edition
 
 ### Added

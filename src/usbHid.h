@@ -18,6 +18,7 @@ void usbMouseInit();
 void usbMouse(bool gyroMode);
 void usbKeyboardInit();
 void usbKeyboard(bool changed);
+void deinitUsb();
 void handleUsbMode(bool mouseMode, bool gyroMode, bool portraitMode, bool changed);
 
 #endif

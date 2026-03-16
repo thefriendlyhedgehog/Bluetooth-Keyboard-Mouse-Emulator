@@ -1,4 +1,5 @@
 #include "usbHid.h"
+#include <USB.h>
 
 USBHIDMouse mouse;
 USBHIDKeyboard keyboard;
@@ -169,9 +170,11 @@ void usbKeyboard(bool changed) {
     }
 }
 
-// -------------------------------------------------------
-// Mode dispatcher
-// -------------------------------------------------------
+void deinitUsb() {
+    // USB.end() is not supported in this framework version.
+    // We will leave USB initialized but inactive when swapping to BT.
+}
+
 void handleUsbMode(bool mouseMode, bool gyroMode, bool portraitMode, bool changed) {
     if (mouseMode) {
         usbMouse(gyroMode, portraitMode);

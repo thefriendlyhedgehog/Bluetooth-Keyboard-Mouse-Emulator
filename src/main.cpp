@@ -7,6 +7,7 @@
 #include <SD.h>
 #include <SPI.h>
 #include <FS.h>
+#include <esp_bt.h>
 
 Preferences preferences;
 
@@ -66,7 +67,7 @@ void selectMode() {
 void setup() {
     Serial.begin(115200);
     delay(1000); // Give serial time to attach
-    Serial.println("\n\n--- M5 ADV - KB-Mouse v2.10.1 Booting ---");
+    Serial.println("\n\n--- M5 ADV - KB-Mouse v2.11.0 Booting ---");
 
     auto cfg = M5.config();
     M5Cardputer.begin(cfg, true);
@@ -200,6 +201,29 @@ void loop() {
                 portraitMode = !portraitMode;
                 displayMainScreen(usbMode, mouseMode, lastBluetoothStatus, gyroMode, portraitMode);
                 delay(150);
+            }
+            if (M5Cardputer.Keyboard.isKeyPressed('m')) {
+                // Dynamic Mode Swap
+                usbMode = !usbMode;
+                Serial.printf("Swapping mode to: %s\n", usbMode ? "USB" : "Bluetooth");
+                
+                if (usbMode) {
+                    deinitBluetooth();
+                    usbMouseInit();
+                    usbKeyboardInit();
+                    USB.begin();
+                } else {
+                    deinitUsb();
+                    initBluetooth();
+                }
+                
+                // Save preference
+                preferences.begin("settings", false);
+                preferences.putBool("usbMode", usbMode);
+                preferences.end();
+                
+                displayMainScreen(usbMode, mouseMode, getBluetoothStatus(), gyroMode, portraitMode);
+                delay(200);
             }
         }
     }

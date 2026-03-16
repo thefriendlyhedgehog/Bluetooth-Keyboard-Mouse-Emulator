@@ -56,26 +56,38 @@ void drawKeyboardIcon(uint8_t x, uint8_t y) {
 void modeIndicator(bool usbMode, bool bluetoothStatus, bool portraitMode) {
     int w = M5Cardputer.Display.width();
     int h = M5Cardputer.Display.height();
-    uint16_t color = (bluetoothStatus || usbMode) ? TFT_GREEN : TFT_RED;
 
     if (portraitMode) {
-        // Vertical indicator on the right side
+        // Dual Vertical indicator on the right side
         int barX = 115;
         int barY = 70;
         int barW = 15;
         int barH = h - 80;
+        int halfH = barH / 2;
         
-        M5Cardputer.Display.drawRoundRect(barX, barY, barW, barH, 3, color);
-        M5Cardputer.Display.setTextColor(color);
+        uint16_t usbColor = usbMode ? TFT_GREEN : TFT_DARKGREY;
+        uint16_t btColor  = (!usbMode && bluetoothStatus) ? TFT_GREEN : (!usbMode ? TFT_RED : TFT_DARKGREY);
+
+        // USB Zone (Top half)
+        M5Cardputer.Display.drawRoundRect(barX, barY, barW, halfH - 2, 3, usbColor);
+        M5Cardputer.Display.setTextColor(usbColor);
         M5Cardputer.Display.setTextSize(1);
-        
-        const char* txt = usbMode ? "USB" : "BT";
-        int len = strlen(txt);
-        for(int i=0; i<len; i++) {
-            M5Cardputer.Display.setCursor(barX + 4, barY + 30 + i*20);
-            M5Cardputer.Display.print(txt[i]);
+        const char* uTxt = "USB";
+        for(int i=0; i<3; i++) {
+            M5Cardputer.Display.setCursor(barX + 4, barY + 10 + i*15);
+            M5Cardputer.Display.print(uTxt[i]);
+        }
+
+        // BT Zone (Bottom half)
+        M5Cardputer.Display.drawRoundRect(barX, barY + halfH + 2, barW, halfH - 2, 3, btColor);
+        M5Cardputer.Display.setTextColor(btColor);
+        const char* bTxt = "BT";
+        for(int i=0; i<2; i++) {
+            M5Cardputer.Display.setCursor(barX + 4, barY + halfH + 20 + i*15);
+            M5Cardputer.Display.print(bTxt[i]);
         }
     } else {
+        uint16_t color = (bluetoothStatus || usbMode) ? TFT_GREEN : TFT_RED;
         int rectW = 104;
         int rectH = 20;
         int x = 10, y = 39;
@@ -109,7 +121,7 @@ void displayWelcomeScreen() {
 
     M5Cardputer.Display.setCursor(60, 120);
     M5Cardputer.Display.setTextSize(1);
-    M5Cardputer.Display.printf("v2.10.1 - ADV Edition");
+    M5Cardputer.Display.printf("v2.11 - ADV Edition");
     delay(2000);
 }
 
@@ -121,8 +133,8 @@ void displayMainScreen(bool usbMode, bool mouseMode, bool bluetoothStatus, bool 
     
     // Header
     M5Cardputer.Display.fillRoundRect(5, 5, w - 10, 25, 5, TFT_LIGHTGREY);
-    M5Cardputer.Display.setCursor(portraitMode ? 10 : 19, 10);
-    M5Cardputer.Display.setTextSize(portraitMode ? 1.4 : 2);
+    M5Cardputer.Display.setCursor(portraitMode ? 8 : 19, 10);
+    M5Cardputer.Display.setTextSize(portraitMode ? 1.3 : 2); // Tightened for portrait
     M5Cardputer.Display.setTextColor(TFT_BLACK);
     M5Cardputer.Display.print("M5 ADV - KB-Mouse"); 
  

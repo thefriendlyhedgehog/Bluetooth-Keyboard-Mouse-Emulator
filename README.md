@@ -1,6 +1,6 @@
 # M5 ADV - KB-Mouse – USB & Bluetooth Keyboard/Mouse Emulator
 
-> **Version 2.10.1 – ADV Edition**
+> **Version 2.11.0 – ADV Edition**
 
 Turn your M5Stack Cardputer into a full USB **and** Bluetooth HID keyboard *and* mouse — with gyro control, portrait mode, SD-configurable auto-boot, and persistent state across reboots.
 
@@ -10,9 +10,10 @@ Turn your M5Stack Cardputer into a full USB **and** Bluetooth HID keyboard *and*
 
 This repository (ADV Edition) is a major evolution of the original Keyboard/Mouse emulator. While the base version only provides basic Bluetooth connectivity and arrow-key mouse movement, the ADV Edition adds:
 
-| Feature | Original Version | **ADV Edition (v2.10.1)** |
+| Feature | Original Version | **ADV Edition (v2.11.0)** |
 |---|---|---|
 | **Connectivity** | Bluetooth Only | **USB + Bluetooth** |
+| **Mode Swap** | Requires reboot | **Dynamic hotkey (Fn+M)** |
 | **Mouse Control** | Arrow keys only | **Arrow keys + Gyro (Tilt)** |
 | **Persistence** | None (starts fresh) | **Saved states (remembers modes)** |
 | **Startup** | Manual selection | **Auto-boot with countdown** |
@@ -53,7 +54,7 @@ This repository (ADV Edition) is a major evolution of the original Keyboard/Mous
 3. Click **Burn**.
 
 ### Option B – OTA Flash (Recommended for updates)
-1. Download the latest `M5-Keyboard-Mouse-v2.10.1-OTA.bin` from [Releases](../../releases).
+1. Download the latest `M5-Keyboard-Mouse-v2.11.0-OTA.bin` from [Releases](../../releases).
 2. Use the [M5Stack OTA Tool](https://flow.m5stack.com/) or `esptool.py` to flash.
 
 ### Option C – Build from Source
