@@ -67,7 +67,7 @@ void selectMode() {
 void setup() {
     Serial.begin(115200);
     delay(1000); // Give serial time to attach
-    Serial.println("\n\n--- M5 ADV - KB-Mouse v2.11.0 Booting ---");
+    Serial.println("\n\n--- M5 ADV - KB-Mouse v2.11.1 Booting ---");
 
     auto cfg = M5.config();
     M5Cardputer.begin(cfg, true);
@@ -158,28 +158,44 @@ void loop() {
 
     // GO button: short press = toggle keyboard/mouse
     //            long press (>500 ms) while in mouse mode = toggle gyro
-    if (M5Cardputer.BtnA.isPressed()) {
-        uint32_t pressStart = millis();
-        // Wait for release, measuring duration
+    if (M5Cardputer.BtnA.pressedFor(500)) {
+        // G0 Long Press: USB/Bluetooth Mode Swap
+        usbMode = !usbMode;
+        Serial.printf("G0 Long Press: Swapping mode to %s\n", usbMode ? "USB" : "Bluetooth");
+        
+        if (usbMode) {
+            deinitBluetooth();
+            usbMouseInit();
+            usbKeyboardInit();
+            USB.begin();
+        } else {
+            deinitUsb();
+            initBluetooth();
+        }
+        
+        // Save preference
+        preferences.begin("settings", false);
+        preferences.putBool("usbMode", usbMode);
+        preferences.end();
+        
+        displayMainScreen(usbMode, mouseMode, getBluetoothStatus(), gyroMode, portraitMode);
+        
+        // Wait for release to prevent multiple toggles
         while (M5Cardputer.BtnA.isPressed()) {
             M5Cardputer.update();
             delay(10);
         }
-        uint32_t pressDuration = millis() - pressStart;
+    }
+    else if (M5Cardputer.BtnA.wasPressed()) {
+        // Short press → toggle keyboard / mouse
+        mouseMode = !mouseMode;
+        if (!mouseMode) gyroMode = false;  // reset gyro when switching to keyboard
 
-        if (pressDuration >= 500 && mouseMode) {
-            // Long press while in mouse mode → toggle gyro
-            gyroMode = !gyroMode;
-        } else {
-            // Short press → toggle keyboard / mouse
-            mouseMode = !mouseMode;
-            if (!mouseMode) gyroMode = false;  // reset gyro when switching to keyboard
-
-            // Persist mouseMode state
-            preferences.begin("settings", false);
-            preferences.putBool("mouseMode", mouseMode);
-            preferences.end();
-        }
+        // Persist mouseMode state
+        preferences.begin("settings", false);
+        preferences.putBool("mouseMode", mouseMode);
+        preferences.end();
+        
         // Redraw device panel
         drawDeviceRect(mouseMode, gyroMode, portraitMode);
         delay(50);
@@ -192,39 +208,22 @@ void loop() {
         
         // Handle Fn hotkeys ONLY in mouse mode to avoid typing conflicts
         if (status.fn && mouseMode) {
-            if (M5Cardputer.Keyboard.isKeyPressed('g')) {
-                gyroMode = !gyroMode;
-                drawDeviceRect(mouseMode, gyroMode, portraitMode);
-                delay(150);
-            }
-            if (M5Cardputer.Keyboard.isKeyPressed('p')) {
-                portraitMode = !portraitMode;
-                displayMainScreen(usbMode, mouseMode, lastBluetoothStatus, gyroMode, portraitMode);
-                delay(150);
-            }
-            if (M5Cardputer.Keyboard.isKeyPressed('m')) {
-                // Dynamic Mode Swap
-                usbMode = !usbMode;
-                Serial.printf("Swapping mode to: %s\n", usbMode ? "USB" : "Bluetooth");
-                
-                if (usbMode) {
-                    deinitBluetooth();
-                    usbMouseInit();
-                    usbKeyboardInit();
-                    USB.begin();
-                } else {
-                    deinitUsb();
-                    initBluetooth();
+            // Configuration Toggles via Ctrl
+            if (M5Cardputer.Keyboard.isKeyPressed(KEY_LEFT_CTRL) || M5Cardputer.Keyboard.isKeyPressed(KEY_RIGHT_CTRL)) {
+                if (M5Cardputer.Keyboard.isKeyPressed('p')) {
+                    portraitMode = !portraitMode;
+                    displayMainScreen(usbMode, mouseMode, lastBluetoothStatus, gyroMode, portraitMode);
+                    delay(200);
                 }
-                
-                // Save preference
-                preferences.begin("settings", false);
-                preferences.putBool("usbMode", usbMode);
-                preferences.end();
-                
-                displayMainScreen(usbMode, mouseMode, getBluetoothStatus(), gyroMode, portraitMode);
-                delay(200);
+                if (M5Cardputer.Keyboard.isKeyPressed('g')) {
+                    gyroMode = !gyroMode;
+                    displayMainScreen(usbMode, mouseMode, lastBluetoothStatus, gyroMode, portraitMode);
+                    delay(200);
+                }
             }
+            // Original Fn hotkeys (m for mode swap, g for gyro, p for portrait) are removed as per the new logic.
+            // The new logic moves mode swap to G0 long press, and gyro/portrait to Ctrl+Fn+key.
+            // The provided snippet only shows the Ctrl+Fn part, implying the old Fn+m/g/p are removed.
         }
     }
 

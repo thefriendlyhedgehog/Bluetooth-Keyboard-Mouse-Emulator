@@ -4,6 +4,15 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2.11.1] – 2026-03-16 – ADV Edition
+
+### Changed
+- **G0 Overhaul**: Short press now toggles Keyboard/Mouse (standard), and **Long Press (>500ms)** toggles USB/Bluetooth mode.
+- **Ctrl Toggles**: Configuration shortcuts (Portrait, Gyro) now use the **Ctrl** key instead of Fn (`Ctrl+P` and `Ctrl+G`).
+- **Hotkey Cleanup**: Removed `Fn+M` mode swap shortcut in favor of the easier G0 long-press.
+
+---
+
 ## [2.11.0] – 2026-03-16 – ADV Edition
 
 ### Added
